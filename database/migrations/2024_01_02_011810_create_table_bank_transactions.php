@@ -11,24 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bank-transactions', function (Blueprint $table) {
+        Schema::create('bank_transactions', function (Blueprint $table) {
 
             $table->id();
-            $table->unsignedBigInteger('id_bank-account'); // Coluna para a chave estrangeira
+            $table->unsignedBigInteger('bank_account_id'); // Coluna para a chave estrangeira
             $table->string('description');
             $table->float('value');
-            $table->unsignedBigInteger('id_transaction-category'); // Coluna para a chave estrangeira
+            $table->unsignedBigInteger('transaction_category_id'); // Coluna para a chave estrangeira
             $table->enum('type', ['+', '-'])->default('+');
             $table->timestamps();
 
-            $table->foreign('id_bank-account') // Definindo a chave estrangeira
+            $table->foreign('bank_account_id') // Definindo a chave estrangeira
                   ->references('id') // Referência à coluna 'id' na tabela 'bank'
-                  ->on('bank-accounts') // Nome da tabela de referência
+                  ->on('bank_accounts') // Nome da tabela de referência
                   ->onDelete('cascade'); // Ação a ser executada ao excluir o registro pai (opcional, pode ser 'cascade', 'set null', 'no action', etc.)
 
-            $table->foreign('id_transaction-category') 
+            $table->foreign('transaction_category_id') 
                   ->references('id') 
-                  ->on('transactions-categories') 
+                  ->on('transaction_categories') 
                   ->onDelete('cascade');
                   
         });

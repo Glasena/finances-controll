@@ -15,8 +15,13 @@ class TransactionCategories extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'description'
+        'description',
+        'id_user'
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
 }

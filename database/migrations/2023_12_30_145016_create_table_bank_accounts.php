@@ -11,26 +11,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bank-accounts', function (Blueprint $table) {
+        Schema::create('bank_accounts', function (Blueprint $table) {
 
             $table->id();
-            $table->string('account-number');
-            $table->unsignedBigInteger('id_bank'); // Coluna para a chave estrangeira
-            $table->unsignedBigInteger('id_user'); // Coluna para a chave estrangeira
-            $table->unsignedBigInteger('id_integration-type');
+            $table->string('account_number');
+            $table->unsignedBigInteger('bank_id'); // Coluna para a chave estrangeira
+            $table->unsignedBigInteger('user_id'); // Coluna para a chave estrangeira
+            $table->unsignedBigInteger('integration_type_id');
             $table->timestamps();
 
-            $table->foreign('id_bank') // Definindo a chave estrangeira
+            $table->foreign('bank_id') // Definindo a chave estrangeira
                   ->references('id') // Referência à coluna 'id' na tabela 'bank'
                   ->on('banks') // Nome da tabela de referência
                   ->onDelete('cascade'); // Ação a ser executada ao excluir o registro pai (opcional, pode ser 'cascade', 'set null', 'no action', etc.)
 
-            $table->foreign('id_user') 
+            $table->foreign('user_id') 
                   ->references('id') 
                   ->on('users') 
                   ->onDelete('cascade');
 
-            $table->foreign('id_integration-type') 
+            $table->foreign('integration_type_id') 
                   ->references('id') 
                   ->on('integration_type') 
                   ->onDelete('cascade'); 
@@ -43,6 +43,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bank-accounts');
+        Schema::dropIfExists('bank_accounts');
     }
 };
