@@ -22,5 +22,14 @@ class BankTransaction extends Model
         'type'
     ];
 
+    public function transaction_category()
+    {
+        return $this->belongsTo(TransactionCategories::class);
+    }
+
+    public function bank_account()
+    {
+        return $this->belongsTo(BankAccount::class);
+    }
 
 }

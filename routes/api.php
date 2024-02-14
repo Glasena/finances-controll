@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BankAccountsController;
 use App\Http\Controllers\BanksController;
+use App\Http\Controllers\BankTransactionsController;
 use App\Http\Controllers\TransactionCategoriesController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
@@ -28,3 +29,6 @@ Route::post('/transaction-categories/{user}', [TransactionCategoriesController::
 
 //Bank Accounts Routes
 Route::post('/bank_account', [BankAccountsController::class, 'store']);
+
+//Bank Transactions 
+Route::post('/bank_transaction', [BankTransactionsController::class, 'store']);

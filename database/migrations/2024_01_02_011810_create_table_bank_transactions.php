@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('bank_account_id'); // Coluna para a chave estrangeira
             $table->string('description');
             $table->float('value');
-            $table->unsignedBigInteger('transaction_category_id'); // Coluna para a chave estrangeira
+            $table->unsignedBigInteger('transaction_category_id')->nullable(); // Coluna para a chave estrangeira
             $table->enum('type', ['+', '-'])->default('+');
             $table->timestamps();
 
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->foreign('transaction_category_id') 
                   ->references('id') 
                   ->on('transaction_categories') 
-                  ->onDelete('cascade');
+                  ->onDelete('set null');
                   
         });
     }
