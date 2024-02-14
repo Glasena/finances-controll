@@ -32,7 +32,7 @@ return new class extends Migration
 
             $table->foreign('integration_type_id') 
                   ->references('id') 
-                  ->on('integration_type') 
+                  ->on('integration_types') 
                   ->onDelete('cascade'); 
 
         });

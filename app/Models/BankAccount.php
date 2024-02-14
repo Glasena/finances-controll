@@ -15,11 +15,25 @@ class BankAccount extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'account-number',
+        'account_number',
         'id_bank',
         'id_user',
         'id_integration-type'
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function bank()
+    {
+        return $this->belongsTo(Bank::class);
+    }
+
+    public function integration_type()
+    {
+        return $this->belongsTo(IntegrationType::class);
+    }
 
 }

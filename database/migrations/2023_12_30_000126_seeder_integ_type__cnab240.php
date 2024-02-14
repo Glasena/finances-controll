@@ -10,7 +10,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::table('integration_type')->insert([
+        DB::table('integration_types')->insert([
             [
                 'description' => 'CNAB 240',
                 'created_at' => now(),
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::table('integration_type')->where('id', '1')->delete();
+        DB::table('integration_types')->where('id', '1')->delete();
     }
 };
