@@ -32,3 +32,4 @@ Route::post('/bank_account', [BankAccountsController::class, 'store']);
 
 //Bank Transactions 
 Route::post('/bank_transaction', [BankTransactionsController::class, 'store']);
+Route::post('/bank_transaction/import/{bank_account}', [BankTransactionsController::class, 'import']);

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('bank_account_id'); // Coluna para a chave estrangeira
             $table->string('description');
+            $table->dateTime('date');
             $table->float('value');
             $table->unsignedBigInteger('transaction_category_id')->nullable(); // Coluna para a chave estrangeira
             $table->enum('type', ['+', '-'])->default('+');

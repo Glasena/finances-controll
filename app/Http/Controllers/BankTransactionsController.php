@@ -6,6 +6,7 @@ use App\Models\BankAccount;
 use App\Models\BankTransaction;
 use App\Models\IntegrationType;
 use App\Models\TransactionCategories;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -43,8 +44,6 @@ class BankTransactionsController extends Controller {
 
             $bank_transaction = new BankTransaction($validatedData);
 
-            //dd($bank_account);
-
             if (isset($transaction_category)) {
                 $bank_transaction->transaction_category()->associate($transaction_category);
             }
@@ -58,6 +57,31 @@ class BankTransactionsController extends Controller {
         };
 
         return response()->json($bank_transaction, 201);
+
+    }
+
+    public function import(Request $request, BankAccount $bank_account) {
+
+        if(!$bank_account instanceof BankAccount) {
+            throw new Exception('Invalid Bank Account');
+        }
+
+        $integrationTypeId = $bank_account->getAttribute('integration_type_id');
+
+        $integrationType = IntegrationType::find($integrationTypeId);
+
+        if(!$integrationType instanceof IntegrationType) {
+            throw new Exception('Integration Type');
+        }        
+
+        foreach ($request->allFiles() as $file) {
+
+            $reader = new ImportFileController();
+
+            $reader->import($file, $integrationType, $bank_account);
+
+            $file->store('pasta');
+        }        
 
     }
 
