@@ -85,5 +85,29 @@ class BankTransactionsController extends Controller {
 
     }
 
+    public function updatetransactioncategory(Request $request, BankTransaction $bankTransaction) {
+
+        try {
+
+            $validatedData = $request->validate([
+                'transaction_category_id' => 'required|integer'
+            ]);
+        
+            $transactionCategory = TransactionCategories::find($validatedData['transaction_category_id']);
+    
+            if(!$transactionCategory instanceof TransactionCategories) {
+                throw new Exception('Transaction Category Not Found !');
+            }  
+            
+            $bankTransaction->transaction_category()->associate($transactionCategory);
+            $bankTransaction->save();
+
+
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+
+        return response()->json($bankTransaction, 201);
+    }
 
 }

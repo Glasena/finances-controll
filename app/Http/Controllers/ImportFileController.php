@@ -22,6 +22,9 @@ class ImportFileController extends Controller {
                 case 2:
                     $this->importBbCsv($file, $bank_account);
                     break;
+                    case 3:
+                    $this->importNubankCsv($file, $bank_account);
+                    break;
                 default:
                 throw new Exception('Invalid Integration Type');
             }
@@ -123,6 +126,48 @@ class ImportFileController extends Controller {
 
     }
 
+    public function importNubankCsv($file, $bank_account) {
 
+        $filePath = $file->getRealPath();
+
+        $handle = fopen($filePath, 'r');
+
+        while (($line = fgets($handle)) !== false) {
+
+            $line = str_replace('"', '', $line);
+
+            $content = explode(',', $line);
+
+            $date = $content[0] != '00/00/0000' ? date_create_from_format('d/m/Y', $content[0]) : null;
+
+            $descr = utf8_encode($content[4]);
+            
+            $value = $content[2];
+
+            if ($value) {
+
+                $type = strpos($value, '-') !== false ? '-' : '+';
+                
+                $value = str_replace('.', '', $content[2]);
+                $value = str_replace('-', '', $content[2]);
+
+                $value = $value < 0 ? $value * -1 : $value;
+
+                $transaction = new BankTransaction();
+
+                $transaction->bank_account()->associate($bank_account);
+                $transaction->description = $descr;
+                $transaction->date = $date;
+                $transaction->value = $value;
+                $transaction->type = $type;
+                $transaction->save();
+
+            }
+
+        }
+
+        fclose($handle);
+
+    }
 
 }
