@@ -3,6 +3,7 @@
 use App\Http\Controllers\BankAccountsController;
 use App\Http\Controllers\BanksController;
 use App\Http\Controllers\BankTransactionsController;
+use App\Http\Controllers\CreditCardBillController;
 use App\Http\Controllers\TransactionCategoriesController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
@@ -34,3 +35,6 @@ Route::post('/bank_account', [BankAccountsController::class, 'store']);
 Route::post('/bank_transaction', [BankTransactionsController::class, 'store']);
 Route::post('/bank_transaction/import/{bank_account}', [BankTransactionsController::class, 'import']);
 Route::put('/bank_transaction/category/{bank_transaction}', [BankTransactionsController::class, 'updatetransactioncategory']);
+
+//Credit Card Bill
+Route::post('/credit_card/import/{bank_account}', [CreditCardBillController::class, 'import']);

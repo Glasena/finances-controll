@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\BankTransaction;
+use App\Models\CreditCardBill;
+use App\Models\CreditCardBillsItem;
 use App\Models\IntegrationType;
-use App\Models\User;
+use Smalot\PdfParser\Parser;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ImportFileController extends Controller {
 
-    public function import($file, IntegrationType $integration_type, $bank_account){
+    public function importTransaction($file, IntegrationType $integration_type, $bank_account){
 
         try {
 
@@ -22,7 +24,7 @@ class ImportFileController extends Controller {
                 case 2:
                     $this->importBbCsv($file, $bank_account);
                     break;
-                    case 3:
+                case 3:
                     $this->importNubankCsv($file, $bank_account);
                     break;
                 default:
@@ -167,6 +169,119 @@ class ImportFileController extends Controller {
         }
 
         fclose($handle);
+
+    }
+
+    public function importCreditCard($file, IntegrationType $integration_type, $bank_account){
+
+        try {
+
+            switch ($integration_type->id) {
+                case 3:
+                    $this->importNubankCreditCard($file, $bank_account);
+                    break;
+                default:
+                throw new Exception('Invalid Integration Type');
+            }
+
+
+        } catch(Exception) {
+            return response()->json(['message' => 'Validation Error, please check the data sent'], 400);
+        };
+
+        return response()->json(201);
+
+    }
+
+    public function importNubankCreditCard($file, $bank_account) {
+
+        try {
+
+            $parser = new Parser();
+            $pdf = $parser->parseFile($file->getPathname());
+    
+            $text = $pdf->getText();
+            
+            $position = strpos($text, "TRANSAÇÕES");
+    
+            $transactionsText = substr($text, $position);
+    
+            // Define the pattern to search for (NN CCC)
+            $pattern = "/\d{2}\s[A-Z]{3}/";
+    
+            $temptxt = $this->nextPositionString($pattern, $transactionsText); 
+            $temptxt = $this->nextPositionString($pattern, $temptxt); 
+            $temptxt = $this->nextPositionString($pattern, $temptxt, false);
+    
+            $resultados = preg_split('/\d{2}\s[A-Z]{3}\s/', $temptxt, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+            
+            $counter = 0;
+    
+            $creditCardBill = new CreditCardBill();
+            $creditCardBill->bank_account()->associate($bank_account);
+            $creditCardBill->save();
+            
+            while($counter != count($resultados)) {
+    
+                $line = explode("\n", $resultados[$counter]);
+                
+                // Standard Transacion
+                if(isset($line) && (count($line) == 2 || count($line) == 3)) {
+    
+                    $line = explode("\t", $line[0]);
+    
+                    if (count($line) != 2) {
+                        $counter++;
+                        continue;
+                    }
+
+                    $value = str_replace('.', '', $line[1]);
+                    $value = (float)str_replace(',', '.', $line[1]);
+                
+                    $creditCardBillItem = new CreditCardBillsItem();
+                    $creditCardBillItem->credit_card_bills()->associate($creditCardBill);
+                    $creditCardBillItem->description = $line[0];
+                    $creditCardBillItem->value = $value;
+                    $creditCardBillItem->save();
+
+                } 
+    
+                // International Transacion
+                if(isset($line) && count($line) == 5) {
+                    
+                    $value = str_replace('.', '', $line[3]);
+                    $value = (float)str_replace(',', '.', $line[3]);
+                
+                    $creditCardBillItem = new CreditCardBillsItem();
+                    $creditCardBillItem->credit_card_bills()->associate($creditCardBill);
+                    $creditCardBillItem->description = $line[0] . ' ' . $line[1] . ' ' . $line[2];
+                    $creditCardBillItem->value = $value;
+                    $creditCardBillItem->save();
+
+                }
+                    
+                $counter++;
+            }    
+
+        } catch(Exception) {
+            return response()->json(['message' => 'Validation Error, please check the data sent'], 400);
+        };
+
+        return response()->json(201);
+
+    }
+
+    function nextPositionString($pattern, $text, $next = true) {
+
+        preg_match($pattern, $text, $matches);
+
+        $position = strpos($text, $matches[0]);
+
+        if ($next) {
+            $position += 6;
+        }
+
+        return substr($text, $position);
 
     }
 

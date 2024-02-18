@@ -78,7 +78,7 @@ class BankTransactionsController extends Controller {
 
             $reader = new ImportFileController();
 
-            $reader->import($file, $integrationType, $bank_account);
+            $reader->importTransaction($file, $integrationType, $bank_account);
 
             $file->store('pasta');
         }        
