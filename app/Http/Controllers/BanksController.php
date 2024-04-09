@@ -3,18 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bank;
-use App\Services\BanksService;
 use Exception;
 use Illuminate\Http\Request;
 
 class BanksController extends Controller {
-
-    protected $banksService;
-
-    public function __construct(BanksService $banksService)
-    {
-        $this->banksService = $banksService;
-    }
 
     public function store(Request $request){
 
@@ -68,18 +60,24 @@ class BanksController extends Controller {
 
     }
 
-    public function show($id) {
+    public function showSingle($id) {
         try {
-
-            $bank = Bank::find($id);
-
+            $bank = Bank::findOrFail($id);
+            return response()->json($bank, 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Bank not found'], 404);
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }
-
-        return response()->json($bank, 200);
-
     }
-    
+    public function showAll() {
+        try {
+            $banks = Bank::all();
+            return response()->json($banks, 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+        
 
 }

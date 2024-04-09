@@ -17,7 +17,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/banks', [BanksController::class], 'index');
 Route::post('/banks', [BanksController::class, 'store']);
 Route::post('/banks/{bank}', [BanksController::class, 'update']);
-Route::post('/banks/{bank}', [BanksController::class, 'show']);
+Route::get('/banks/{bank}', [BanksController::class, 'showSingle']);
+Route::get('/banks', [BanksController::class, 'showAll']);
 Route::post('/banks/delete/{bank}', [BanksController::class, 'delete']);
 
 // User Routes
