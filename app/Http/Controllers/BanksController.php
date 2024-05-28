@@ -14,7 +14,8 @@ class BanksController extends Controller {
 
             $validatedData = $request->validate([
                 'name' => 'required|string',
-                'code' => 'required|string'
+                'code' => 'required|string',
+                'img' => 'nullable|string'
         
             ]);
 
@@ -33,7 +34,8 @@ class BanksController extends Controller {
         try {
 
             $validatedData = $request->validate([
-                'name' => 'required|string'
+                'name' => 'required|string',
+                'img' => 'nullable|string'
             ]);
     
             $bank->update($validatedData);
